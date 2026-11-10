@@ -3,13 +3,50 @@
 import { useForm } from "react-hook-form";
 import Error from "./Error";
 import type { DraftPatientFormData } from "../types";
+import { usePatientStore } from "../Store/Store";
+import { useEffect } from "react";
+import { toast } from 'react-toastify';
 
 export default function PatientForm() {
-  const { register, handleSubmit, formState: { errors } } = useForm<DraftPatientFormData>();
+  const addPatient = usePatientStore((state) => state.addPatient);
+  const activeId = usePatientStore((state) => state.activeId);
+  const patients = usePatientStore((state) => state.patients);
+  const updatePatient = usePatientStore((state) => state.updatePatient);
+
+  const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm<DraftPatientFormData>();
+ 
+  useEffect(() => {
+    if (activeId) {
+      const activePatient = patients.find((patient) => patient.id === activeId);
+      if (activePatient) {
+        console.log("Active patient found:", activePatient);
+         setValue("name", activePatient.name);
+         setValue("caretaker", activePatient.caretaker);
+         setValue("email", activePatient.email);
+         setValue("date", activePatient.date);
+         setValue("symptoms", activePatient.symptoms);
+      }
+    }
+  }, [activeId]);
 
   const registerPatient = (data: DraftPatientFormData) => {
-    console.log("Registrando paciente", data);
+    if(activeId) {
+      updatePatient(data);
+    } else {
+      addPatient(data);
+      toast.success('Paciente agregado correctamente', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+    reset();
   };
+   
 
   return (
     <div className="md:w-1/2 lg:w-2/5 mx-5">

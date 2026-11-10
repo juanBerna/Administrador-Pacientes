@@ -1,6 +1,8 @@
 import PageForm from "./components/PageForm"
 import Pages_list from "./components/Pages_list"
+import {ToastContainer} from 'react-toastify'
 
+import 'react-toastify/dist/ReactToastify.css';
 function App() {
 
   return (
@@ -14,6 +16,7 @@ function App() {
     <PageForm/>
     <Pages_list/>
       </div>
+      <ToastContainer/>
     </>
   )
 }
